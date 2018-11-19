@@ -325,6 +325,13 @@ void
 spi_transfer(struct spi_config config, uint8_t receive_data,
              uint8_t len, uint8_t *data)
 {
+    // clear any pending data in receive buffer
+    if (receive_data) {
+        while (LL_SPI_IsActiveFlag_RXNE(SPI2)) {
+            LL_SPI_ReceiveData8(SPI2);
+        }
+    }
+
     while (len--) {
         LL_SPI_TransmitData8(SPI2, *data);
         while (!LL_SPI_IsActiveFlag_TXE(SPI2));
